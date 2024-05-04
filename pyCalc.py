@@ -1,50 +1,53 @@
-from tkinter import Tk, Entry, Button, StringVar
+import tkinter as tk
+from math import *
 
-class Calculator:
-    def __init__(self, master):
-        master.title("Calculator")
-        master.geometry('357x420+0+0')
-        master.config(bg = 'gray')
-        master.resizable(False, False)
+def evaluate_expression():
+    try:
+        result = eval(entry.get())
+        entry.delete(0, tk.END)
+        entry.insert(tk.END, str(result))
+    except Exception as e:
+        entry.delete(0, tk.END)
+        entry.insert(tk.END, "Error")
 
-        self.equation = StringVar()
-        self.entry_value = ''
-        Entry(width = 17, bg = '#fff', font = ('Arial Bold', 28), textvariable = self.equation).place(x = 0, y = 0)
+def button_click(symbol):
+    current_text = entry.get()
+    entry.delete(0, tk.END)
+    entry.insert(tk.END, current_text + symbol)
 
-        Button(width = 11, height = 4, text = '(', relief = 'flat', bg = 'white', command = lambda: self.show('(')).place(x =0, y = 50)
-        Button(width = 11, height = 4, text = ')', relief = 'flat', bg = 'white', command = lambda: self.show(')')).place(x = 90, y = 50)
-        Button(width = 11, height = 4, text = '%', relief = 'flat', bg = 'white', command = lambda: self.show('%')).place(x = 180, y = 50)
-        Button(width = 11, height = 4, text = '1', relief = 'flat', bg = 'white', command = lambda: self.show(1)).place(x = 0, y = 125)
-        Button(width = 11, height = 4, text = '2', relief = 'flat', bg = 'white', command = lambda: self.show(2)).place(x = 90, y = 125)
-        Button(width = 11, height = 4, text = '3', relief = 'flat', bg = 'white', command = lambda: self.show(3)).place(x = 180, y = 125)
-        Button(width = 11, height = 4, text = '4', relief = 'flat', bg = 'white', command = lambda: self.show(4)).place(x = 0, y = 200)
-        Button(width = 11, height = 4, text = '5', relief = 'flat', bg = 'white', command = lambda: self.show(5)).place(x = 90, y = 200)
-        Button(width = 11, height = 4, text = '6', relief = 'flat', bg = 'white', command = lambda: self.show(6)).place(x = 180, y = 200)
-        Button(width = 11, height = 4, text = '7', relief = 'flat', bg = 'white', command = lambda: self.show(7)).place(x = 0, y = 275)
-        Button(width = 11, height = 4, text = '8', relief = 'flat', bg = 'white', command = lambda: self.show(8)).place(x =180, y=275)
-        Button(width = 11, height = 4, text = '9', relief = 'flat', bg = 'white', command = lambda: self.show(9)).place(x = 90, y = 275)
-        Button(width = 11, height = 4, text = '0', relief = 'flat', bg = 'white', command = lambda: self.show(0)).place(x = 90, y = 350)
-        Button(width = 11, height = 4, text = '.', relief = 'flat', bg = 'white', command = lambda: self.show('.')).place(x = 180, y = 350)
-        Button(width = 11, height = 4, text = '+', relief = 'flat', bg = 'white', command = lambda: self.show('+')).place(x = 270, y = 275)
-        Button(width = 11, height = 4, text = '-', relief = 'flat', bg = 'white', command = lambda: self.show('-')).place(x = 270, y = 200)
-        Button(width = 11, height = 4, text = '/', relief = 'flat', bg = 'white', command = lambda: self.show('/')).place(x = 270, y = 50)
-        Button(width = 11, height = 4, text='x', relief= 'flat', bg = 'white', command = lambda: self.show('*')).place(x = 270, y = 125)
-        Button(width = 11, height = 4, text = '=', relief = 'flat', bg = 'white', command = self.solve).place(x = 270, y = 350)
-        Button(width = 11, height = 4, text = 'C', relief = 'flat', command = self.clear).place(x = 0, y = 350)
+def clear_entry():
+    entry.delete(0, tk.END)
 
-    def show(self, value):
-        self.entry_value += str(value)
-        self.equation.set(self.entry_value)
+def clear_all():
+    entry.delete(0, tk.END)
 
-    def clear(self):
-        self.entry_value = ''
-        self.equation.set(self.entry_value)
+root = tk.Tk()
+root.title("Scientific Calculator")
 
-    def solve(self):
-        result = eval(self.entry_value)
-        self.equation.set(result)
+entry = tk.Entry(root, width=40, borderwidth=5)
+entry.grid(row=0, column=0, columnspan=4)
 
+buttons = [
+    ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("/", 1, 3),
+    ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("*", 2, 3),
+    ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("-", 3, 3),
+    ("0", 4, 0), (".", 4, 1), ("+", 4, 2), ("=", 4, 3),
+    ("(", 5, 0), (")", 5, 1), ("^", 5, 2), ("sqrt(", 5, 3),
+    ("sin(", 6, 0), ("cos(", 6, 1), ("tan(", 6, 2), ("log(", 6, 3),
+]
 
-root = Tk()
-calculator = Calculator(root)
+for button in buttons:
+    text, row, col = button
+    btn = tk.Button(root, text=text, padx=20, pady=20, command=lambda text=text: button_click(text))
+    btn.grid(row=row, column=col, padx=5, pady=5)
+
+clear_button = tk.Button(root, text="Clear", padx=20, pady=20, command=clear_entry)
+clear_button.grid(row=7, column=0, padx=5, pady=5)
+
+all_clear_button = tk.Button(root, text="AC", padx=20, pady=20, command=clear_all)
+all_clear_button.grid(row=7, column=1, padx=5, pady=5)
+
+equal_button = tk.Button(root, text="=", padx=20, pady=20, command=evaluate_expression)
+equal_button.grid(row=7, column=2, padx=5, pady=5)
+
 root.mainloop()
